@@ -22,4 +22,12 @@ public interface IZohoDeskService
         string ticketId,
         SupportTicketUpdateRequest request,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Добавляет комментарий к тикету.
+    /// </summary>
+    Task<TicketComment> AddCommentAsync(
+        string ticketId,
+        CreateTicketCommentRequest request,
+        CancellationToken cancellationToken = default);
 }

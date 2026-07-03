@@ -31,11 +31,15 @@ public static class ServiceCollectionExtensions
         services.Configure<ZohoDeskOptions>(
             configuration.GetSection(ZohoDeskOptions.SectionName));
 
+        services.AddSingleton<INotificationService, LogNotificationService>();
+
         services.AddHttpClient<IZohoApiClient, ZohoApiClient>();
 
         services.AddScoped<IContactsClient, ContactsClient>();
 
         services.AddScoped<ITicketsClient, TicketsClient>();
+
+        services.AddScoped<ICommentsClient, CommentsClient>();
 
         services.AddScoped<IZohoDeskService, ZohoDeskService>();
 

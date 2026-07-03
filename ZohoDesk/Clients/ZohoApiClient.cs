@@ -24,11 +24,13 @@ namespace ZohoDesk.Clients;
 public sealed class ZohoApiClient(
     HttpClient httpClient,
     IZohoAuthService authService,
+    INotificationService notificationService,
     IOptions<ZohoDeskOptions> options,
     ILogger<ZohoApiClient> logger) : IZohoApiClient
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly IZohoAuthService _authService = authService;
+    private readonly INotificationService _notificationService = notificationService;
     private readonly ZohoDeskOptions _options = options.Value;
     private readonly ILogger<ZohoApiClient> _logger = logger;
 
@@ -127,6 +129,16 @@ public sealed class ZohoApiClient(
                     cancellationToken);
 
                 continue;
+            }
+
+            // Все попытки исчерпаны - отправляем уведомление
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                await _notificationService.NotifyFailureAsync(
+                    $"Исчерпаны все попытки выполнения запроса {request.Method} {request.RequestUri}. " +
+                    $"Код ответа: {response.StatusCode}. Ответ: {errorContent}",
+                    cancellationToken: cancellationToken);
             }
 
             return response;

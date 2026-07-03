@@ -1,0 +1,1056 @@
+Create ticket comment
+
+This API allows you to add a comment to a ticket. To mention an agent or team, use the below format:
+
+    To mention an agent: zsu[@user:{zuid}]zsu
+    To mention a team: zsu[@team:{teamId}_{teamName}]zsu 
+
+Credit: 1 credit/call
+Query Params
+Param Name
+Data Type
+Description
+Attributes
+Param Name
+Data Type
+Description
+content
+
+string
+optional,
+max chars : 32000
+
+The comment content.
+To mention an agent:
+zsu[@user:{zuid}]zsu
+To mention a team:
+zsu[@team:{teamId}_{teamName}]zsu
+
+Note: This format can also be used to retrieve agent information.
+isPublic
+
+boolean
+optional
+
+Specifies the comment is public or private.
+
+Note: This key's value can only be set when adding a comment.
+attachmentIds
+
+list
+optional
+
+List of file attachments included in the comment.
+
+Note: For more details on attachments, refer to the Uploads section.
+contentType
+
+string
+optional,
+max chars : 100
+
+Specifies the type of the content whether html or plainText. The default value is html.
+POST api/v1/tickets/{ticket_id}/comments
+
+OAuth Scope
+
+Desk.tickets.UPDATE
+
+Request Example
+
+    CURL
+
+$ curl -X POST https://desk.zoho.com/api/v1/tickets/4000000528005/comments
+  -H "orgId:2389290"
+  -H "Authorization:Zoho-oauthtoken 1000.3d0a155402dbb59f776fd63adb1e67c0.a41ea557a6a8d7e402690098b2056f60s"
+
+  -d'{
+  "isPublic" : "true",
+  "attachmentIds" : [ "4000000008892" ],
+  "contentType" : "html",
+  "content" : "zsu[@user:11550965]zsu Please fix this ASAP"
+}'
+
+Response Example
+
+{
+  "modifiedTime" : null,
+  "attachments" : [ {
+    "size" : "12734",
+    "name" : "Attachment.png",
+    "id" : "4000000008892",
+    "href" : "https://desk.zoho.com/api/v1/tickets/4000000528005/comments/4000000529001/attachments/4000000008892/content"
+  } ],
+  "commentedTime" : "2017-01-24T14:06:58.193Z",
+  "isPublic" : true,
+  "id" : "4000000529001",
+  "contentType" : "html",
+  "content" : "zsu[@user:11550965]zsu Please fix this ASAP",
+  "commenterId" : "4000000008692",
+  "commenter" : {
+    "firstName" : "Jade",
+    "lastName" : "Tywin",
+    "photoURL" : "https://desk.zoho.com/api/v1/agents/4000000008692/photo?orgId=292828",
+    "name" : "Jade Tywin",
+    "roleName" : "LightAgent",
+    "type" : "AGENT",
+    "email" : "jade12tywin@zylker.com"
+  }
+}
+
+
+Create Contact
+
+This API creates a contact in your help desk portal.
+
+Credit: 1 credit/call
+Attributes
+Param Name
+Data Type
+Description
+customFields
+
+deprecated
+
+object
+optional
+
+User-defined fields related to the contact
+cf
+
+JSONObject
+optional
+
+User-defined fields related to the contact
+lastName
+
+string
+required,
+max chars : 200
+
+Last name of the contact
+firstName
+
+string
+optional,
+max chars : 40
+
+First name of the contact
+facebook
+
+string
+optional,
+max chars : 100
+
+Facebook ID of the contact
+twitter
+
+string
+optional,
+max chars : 100
+
+Twitter ID of the contact
+secondaryEmail
+
+string
+optional,
+max chars : 100
+
+Secondary email ID of the contact
+email
+
+string
+optional,
+max chars : 255
+
+Email ID of the contact
+phone
+
+string
+optional,
+max chars : 50
+
+Phone number of the contact
+mobile
+
+string
+optional,
+max chars : 50
+
+Mobile number of the contact
+city
+
+string
+optional,
+max chars : 100
+
+Contact's city of residence
+country
+
+string
+optional,
+max chars : 100
+
+Contact's country of residence
+state
+
+string
+optional,
+max chars : 100
+
+Contact's state of residence
+street
+
+string
+optional,
+max chars : 250
+
+Contact's address
+zip
+
+string
+optional,
+max chars : 30
+
+Zip code
+description
+
+string
+optional,
+max chars : 65535
+
+Contact description
+title
+
+string
+optional,
+max chars : 100
+
+Contact title
+type
+
+string
+optional,
+max chars : 120
+
+Contact type
+ownerId
+
+long
+optional
+
+ID of the user who creates the contact
+accountId
+see documentation
+
+long
+optional
+
+Account to which the contact is mapped
+language
+
+string
+optional,
+max chars : 255
+
+Language preference to set for the Contact
+
+Search Contacts
+
+This API searches for contacts in your help desk.
+You can provide multiple values separated by commas, and the search will be performed on the field using any of the provided values.
+
+Learn more about search and how it works.
+
+Credit: 3 credits/call, 1 credit (with unique ID)
+Query Params
+Param Name
+Data Type
+Description
+from
+see documentation
+
+int
+optional,
+range : 0-4999
+
+The starting index for fetching results.
+default : 0
+
+starts from 0
+limit
+see documentation
+
+int
+optional,
+range : 1-100
+
+Specifies the number of tickets to be fetched.
+default : 10
+id
+
+long
+optional
+
+ID of the contact
+exact match
+fullName
+
+String
+optional
+
+Full name of the contact
+wildcard search
+firstName
+
+String
+optional
+
+First name of the contact
+wildcard search
+
+empty check
+
+not empty check
+lastName
+
+String
+optional
+
+Last name of the contact
+wildcard search
+email
+
+String
+optional
+
+Email ID of the contact
+wildcard search
+
+empty check
+
+not empty check
+phone
+
+String
+optional
+
+Phone number of the contact
+wildcard search
+
+empty check
+
+not empty check
+mobile
+
+String
+optional
+
+Mobile number of the contact
+wildcard search
+
+empty check
+
+not empty check
+accountName
+
+String
+optional
+
+Name of the account associated with the Contact
+wildcard search
+
+empty check
+
+not empty check
+_all
+
+String
+optional
+
+Find throughout the contact
+wildcard search
+customField1
+see documentation
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield1=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+e.g customField1=cf_mappedWithAccount:true
+empty check
+e.g customField1=cf_mappedWithAccount:${empty}
+not empty check
+customField2
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield2=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+e.g customField2=cf_mappedWithAccount:${notempty}
+customField3
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield3=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField4
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield4=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField5
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield5=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField6
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield6=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField7
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield7=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField8
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield8=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField9
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield9=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+customField10
+
+String
+optional
+
+To search for the values in a field, use the below format.
+customfield10=Field ApiName:search value
+This will compare the specified search values with the field's value and retrieve the matching results.
+wildcard search
+
+empty check
+
+not empty check
+createdTimeRange
+
+timestamp
+optional
+
+Key that filters contacts created in a particular period of time.
+Enter the from and to dates in the ISO date format of yyyy-MM-ddThh:mm:ss.SSSZ;
+
+For example,
+createdTimeRange=2017-11-05T00:00:00.000Z,2018-09-05T23:59:00.000Z
+modifiedTimeRange
+
+timestamp
+optional
+
+Key that filters contacts modified in a particular period of time.
+Enter the from and to dates in the ISO date format of yyyy-MM-ddThh:mm:ss.SSSZ;
+
+For example,
+modifiedTimeRange=2017-11-05T00:00:00.000Z,2018-09-05T23:59:00.000Z
+sortBy
+
+String
+optional
+
+SortBy can be:
+relevance,
+
+modifiedTime,
+
+createdTime,
+
+lastName,
+
+firstName
+To specify sorting order, use as given below:
+For descending order: sortBy=-modifiedTime
+
+For ascending order: sortBy=modifiedTime
+GET /api/v1/contacts/search?from={from}&limit={limit}&sortField={sortField}&customField1={apiName:value}
+
+OAuth Scope
+
+Desk.search.READ , Desk.contacts.READ
+
+Request Example
+
+    CURL
+
+$ curl -X GET https://desk.zoho.com/api/v1/contacts/search?limit=1&lastName=Lawrence&email=%24%7Bnotempty%7D%20&customField1=cf_permanentaddress%3AMenlo Park
+  -H "orgId:2389290"
+  -H "Authorization:Zoho-oauthtoken 1000.3d0a155402dbb59f776fd63adb1e67c0.a41ea557a6a8d7e402690098b2056f60s"
+
+Response Example
+
+{
+  "data" : [ {
+    "lastName" : "Lawrence",
+    "modifiedTime" : "2016-05-04T09:57:17.000Z",
+    "country" : null,
+    "secondaryEmail" : null,
+    "city" : null,
+    "description" : null,
+    "ownerId" : "1892000000042001",
+    "type" : null,
+    "title" : null,
+    "photoURL" : "https://desk.zoho.com/api/v1/contacts/1892000000042032/photo",
+    "twitter" : null,
+    "street" : null,
+    "createdTime" : "2013-11-04T11:21:07.000Z",
+    "isEndUser" : "false",
+    "zohoCRMContact" : {
+      "id" : "5000000014010",
+      "type" : "contacts_leads"
+    },
+    "customerHappiness" : {
+      "badPercentage" : "22",
+      "okPercentage" : "31",
+      "goodPercentage" : "47"
+    },
+    "state" : null,
+    "id" : "1892000000042032",
+    "email" : "lawrence@zylker.com",
+    "zip" : null,
+    "owner" : {
+      "firstName" : "Twin",
+      "lastName" : "john",
+      "photoURL" : null,
+      "emailId" : "lawrence@zylker.com",
+      "id" : "1892000000042001",
+      "zuid" : "14345345"
+    },
+    "cf" : {
+      "cf_permanentaddress" : "Menlo Park, California",
+      "cf_lastcontactedon" : null
+    },
+    "facebook" : null,
+    "mobile" : null,
+    "accountId" : "1892000000975382",
+    "firstName" : "Jennifer",
+    "phone" : "1 888 900 9646",
+    "webUrl" : "https://desk.zoho.com/support/zylker/ShowHomePage.do#Contacts/dv/d126330fb061247d9ebddaeb9d93ba74750b0284bc703b38",
+    "account" : {
+      "website" : null,
+      "accountName" : "Zylker",
+      "id" : "1892000000975382"
+    }
+  } ],
+  "count" : 1
+
+
+Create Ticket
+
+Creates a new ticket using the data provided in the request payload.
+
+Credit: 1 credit/call
+Attributes
+Param Name
+Data Type
+Description
+subject
+
+string
+required,
+max chars : 255
+
+Subject of the ticket
+departmentId
+see documentation
+
+long
+required,
+range : >0
+
+ID of the department to associate the ticket
+contactId
+see documentation
+
+referred object
+optional
+
+ID of the contact
+
+Note: The contactId is mandatory for creating a ticket. If the contact does not already exist, include the contact JSON object to create the contact during ticket creation.
+contact
+
+Contact
+optional
+
+Additional details of the contact
+
+Note: If the provided email ID already exists in your portal, the corresponding contactId is automatically used while creating the ticket. Otherwise, a new contact is created, and its contactId is mapped to the ticket.
+
+Alert:  The user's profile and field-level permissions are applied during contact creation. The lastName or email attribute must be present in the contact JSON object.
+productId
+
+referred object
+optional
+
+ID of the product to associate the ticket
+uploads
+see documentation
+
+list
+optional
+
+File attachments in the ticket. For more information, refer to the Uploads section
+email
+
+string
+optional,
+max chars : 150
+
+Email ID of the ticket
+phone
+
+string
+optional,
+max chars : 120
+
+Phone number of the ticket
+description
+
+string
+optional,
+max chars : 65535
+
+Description of the ticket
+status
+
+string
+optional,
+max chars : 120
+
+Status of the ticket.
+
+Note: This can be a system-defined or custom value that falls under one of the status types: OPEN, ON HOLD, or CLOSED.
+assigneeId
+
+long
+optional
+
+ID of the assignee
+category
+
+string
+optional,
+max chars : 300
+
+Category of the ticket
+subCategory
+
+string
+optional,
+max chars : 300
+
+Subcategory of the ticket
+resolution
+
+string
+optional,
+max chars : 65535
+
+Resolution notes of the ticket
+dueDate
+
+timestamp
+optional
+
+Due date of the ticket
+priority
+
+string
+optional,
+max chars : 120
+
+Priority of the ticket
+
+Possible values:
+
+    System-defined values such as Medium, High, and Low
+    Custom values are also supported
+
+language
+
+string
+optional,
+max chars : 255
+
+Language preference of the ticket
+channel
+
+string
+optional,
+max chars : 120
+
+Channel through which the ticket is being created.
+classification
+
+string
+optional,
+max chars : 120
+
+Classification type of the ticket
+
+Possible values:
+
+    System-defined values such as Problem, Request, and Question
+    Custom values are also supported
+
+customFields
+
+deprecated
+
+JSONObject
+optional
+
+Custom fields in the ticket
+cf
+
+JSONObject
+optional
+
+Custom fields in the ticket
+webUrl
+
+string
+optional,
+max chars : 5000
+
+URL to access the resource
+sharedDepartments
+
+list
+optional
+
+List of departments to which the ticket could be shared, along with the access privileges for each department
+teamId
+
+long
+optional
+
+ID of the team to assign the ticket
+secondaryContacts
+see documentation
+
+list
+optional
+
+List of Secondary contacts
+entitySkills
+see documentation
+
+list
+optional
+
+List of skillIds to associate with the ticket
+
+Note:
+
+    The order of skillIds (first = highest priority) determines the skill-based assignment of tickets
+
+    A maximum of 10 IDs can be provided as comma separated values
+
+Update Ticket
+
+Updates an existing ticket using the data provided in the request payload.
+
+Credit: 1 credit/call
+Query Params
+Param Name
+Data Type
+Description
+disableClosureNotification
+
+boolean
+optional
+
+Indicates whether sending a closure notification to the contact is disabled when a ticket is closed.
+
+Possible values:
+
+    true: Closure notification is not sent to the contact
+    false: Closure notification is sent to the contact
+
+Attributes
+Param Name
+Data Type
+Description
+subject
+
+string
+optional,
+max chars : 255
+
+Subject of the ticket
+departmentId
+see documentation
+
+long
+optional,
+range : >0
+
+ID of the department to associate the ticket
+contactId
+see documentation
+
+referred object
+optional
+
+ID of the contact
+
+Note: The contactId is mandatory for creating a ticket. If the contact does not already exist, include the contact JSON object to create the contact during ticket creation.
+contact
+
+Contact
+optional
+
+Additional details of the contact
+
+Note: If the provided email ID already exists in your portal, the corresponding contactId is automatically used while creating the ticket. Otherwise, a new contact is created, and its contactId is mapped to the ticket.
+
+Alert:  The user's profile and field-level permissions are applied during contact creation. The lastName or email attribute must be present in the contact JSON object.
+productId
+
+referred object
+optional
+
+ID of the product to associate the ticket
+uploads
+see documentation
+
+list
+optional
+
+File attachments in the ticket. For more information, refer to the Uploads section
+email
+
+string
+optional,
+max chars : 150
+
+Email ID of the ticket
+phone
+
+string
+optional,
+max chars : 120
+
+Phone number of the ticket
+description
+
+string
+optional,
+max chars : 65535
+
+Description of the ticket
+status
+
+string
+optional,
+max chars : 120
+
+Status of the ticket.
+
+Note: This can be a system-defined or custom value that falls under one of the status types: OPEN, ON HOLD, or CLOSED.
+assigneeId
+
+long
+optional
+
+ID of the assignee
+category
+
+string
+optional,
+max chars : 300
+
+Category of the ticket
+subCategory
+
+string
+optional,
+max chars : 300
+
+Subcategory of the ticket
+resolution
+
+string
+optional,
+max chars : 65535
+
+Resolution notes of the ticket
+dueDate
+
+timestamp
+optional
+
+Due date of the ticket
+priority
+
+string
+optional,
+max chars : 120
+
+Priority of the ticket
+
+Possible values:
+
+    System-defined values such as Medium, High, and Low
+    Custom values are also supported
+
+language
+
+string
+optional,
+max chars : 255
+
+Language preference of the ticket
+channel
+
+string
+optional,
+max chars : 120
+
+Channel through which the ticket is being created.
+classification
+
+string
+optional,
+max chars : 120
+
+Classification type of the ticket
+
+Possible values:
+
+    System-defined values such as Problem, Request, and Question
+    Custom values are also supported
+
+customFields
+
+deprecated
+
+JSONObject
+optional
+
+Custom fields in the ticket
+cf
+
+JSONObject
+optional
+
+Custom fields in the ticket
+webUrl
+
+string
+optional,
+max chars : 5000
+
+URL to access the resource
+sharedDepartments
+
+list
+optional
+
+List of departments to which the ticket could be shared, along with the access privileges for each department
+teamId
+
+long
+optional
+
+ID of the team to assign the ticket
+secondaryContacts
+see documentation
+
+list
+optional
+
+List of Secondary contacts
+entitySkills
+see documentation
+
+list
+optional
+
+List of skillIds to associate with the ticket
+
+Note:
+
+    The order of skillIds (first = highest priority) determines the skill-based assignment of tickets
+
+    A maximum of 10 IDs can be provided as comma separated values

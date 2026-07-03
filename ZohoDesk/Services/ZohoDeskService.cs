@@ -14,6 +14,7 @@ public sealed class ZohoDeskService : IZohoDeskService
 {
     private readonly IContactsClient _contactsClient;
     private readonly ITicketsClient _ticketsClient;
+    private readonly ICommentsClient _commentsClient;
     private readonly ZohoDeskOptions _options;
     private readonly ILogger<ZohoDeskService> _logger;
 
@@ -23,11 +24,13 @@ public sealed class ZohoDeskService : IZohoDeskService
     public ZohoDeskService(
         IContactsClient contactsClient,
         ITicketsClient ticketsClient,
+        ICommentsClient commentsClient,
         IOptions<ZohoDeskOptions> options,
         ILogger<ZohoDeskService> logger)
     {
         _contactsClient = contactsClient;
         _ticketsClient = ticketsClient;
+        _commentsClient = commentsClient;
         _options = options.Value;
         _logger = logger;
     }
@@ -43,7 +46,7 @@ public sealed class ZohoDeskService : IZohoDeskService
             request.Email);
 
         // Ищем контакт
-        var contact = await _contactsClient.FindByEmailAsync(
+        var contact = await _contactsClient.FindFirstByEmailAsync(
             request.Email,
             cancellationToken);
 
@@ -135,5 +138,36 @@ public sealed class ZohoDeskService : IZohoDeskService
             ticket.Id);
 
         return ticket;
+    }
+
+    public async Task<TicketComment> AddCommentAsync(
+        string ticketId,
+        CreateTicketCommentRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ticketId);
+        ArgumentNullException.ThrowIfNull(request);
+
+        _logger.LogInformation(
+            "Добавление комментария к тикету {TicketId}.",
+            ticketId);
+
+        var comment = await _commentsClient.CreateAsync(
+            ticketId,
+            request,
+            cancellationToken);
+
+        if (comment is null)
+        {
+            throw new InvalidOperationException(
+                $"Не удалось добавить комментарий к тикету '{ticketId}'.");
+        }
+
+        _logger.LogInformation(
+            "Комментарий {CommentId} успешно добавлен к тикету {TicketId}.",
+            comment.Id,
+            ticketId);
+
+        return comment;
     }
 }
