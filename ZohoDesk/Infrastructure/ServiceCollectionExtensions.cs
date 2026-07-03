@@ -33,7 +33,31 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<INotificationService, LogNotificationService>();
 
-        services.AddHttpClient<IZohoApiClient, ZohoApiClient>();
+        // HttpClient для Zoho Desk API
+        services.AddHttpClient<IZohoApiClient, ZohoApiClient>(client =>
+        {
+            var options = configuration
+                .GetSection(ZohoDeskOptions.SectionName)
+                .Get<ZohoDeskOptions>();
+
+            if (options is not null && !string.IsNullOrWhiteSpace(options.DeskBaseUrl))
+            {
+                client.BaseAddress = new Uri(options.DeskBaseUrl);
+            }
+        });
+
+        // HttpClient для OAuth запросов (accounts.zoho.com)
+        services.AddHttpClient<ZohoAuthService>(client =>
+        {
+            var options = configuration
+                .GetSection(ZohoDeskOptions.SectionName)
+                .Get<ZohoDeskOptions>();
+
+            if (options is not null && !string.IsNullOrWhiteSpace(options.AccountsBaseUrl))
+            {
+                client.BaseAddress = new Uri(options.AccountsBaseUrl);
+            }
+        });
 
         services.AddScoped<IContactsClient, ContactsClient>();
 

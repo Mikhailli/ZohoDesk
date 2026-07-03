@@ -29,9 +29,9 @@ public sealed class ZohoDeskOptions
     /// <summary>
     /// Постоянный Refresh Token.
     /// Используется для получения нового Access Token.
+    /// Обязателен для обычной работы. Может быть пустым при первоначальном получении токенов.
     /// </summary>
-    [Required]
-    public required string RefreshToken { get; init; }
+    public string? RefreshToken { get; init; }
 
     /// <summary>
     /// Идентификатор организации в Zoho Desk.
@@ -53,6 +53,12 @@ public sealed class ZohoDeskOptions
     [Required]
     [Url]
     public required string DeskBaseUrl { get; init; }
+
+    /// <summary>
+    /// URI перенаправления для OAuth авторизации.
+    /// Обязателен для Web-based авторизации.
+    /// </summary>
+    public string? RedirectUri { get; init; }
 
     /// <summary>
     /// Максимальное время ожидания HTTP-запроса.

@@ -1,4 +1,6 @@
-﻿namespace ZohoDesk.Services;
+﻿using ZohoDesk.DTO;
+
+namespace ZohoDesk.Services;
 
 /// <summary>
 /// Предоставляет методы для получения и обновления OAuth Access Token,
@@ -26,5 +28,22 @@ public interface IZohoAuthService
     /// Токен отмены операции.
     /// </param>
     Task<string> RefreshAccessTokenAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Обменивает grant token (authorization code) на access token и refresh token.
+    /// Используется один раз при первоначальной настройке Self Client авторизации.
+    /// </summary>
+    /// <param name="grantToken">
+    /// Grant token (authorization code), полученный через Zoho Developer Console.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// Токен отмены операции.
+    /// </param>
+    /// <returns>
+    /// Ответ с access token, refresh token и временем жизни.
+    /// </returns>
+    Task<ZohoAccessTokenResponse> ExchangeCodeForTokenAsync(
+        string grantToken,
         CancellationToken cancellationToken = default);
 }

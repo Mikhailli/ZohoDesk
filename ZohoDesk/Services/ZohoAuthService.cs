@@ -32,6 +32,67 @@ public sealed class ZohoAuthService(
     };
 
     /// <inheritdoc />
+    public async Task<ZohoAccessTokenResponse> ExchangeCodeForTokenAsync(
+        string grantToken,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(grantToken);
+
+        _logger.LogInformation("Обмен grant token на access/refresh tokens.");
+
+        var url = QueryHelpers.AddQueryString(
+            ZohoEndpoints.OAuthToken,
+            new Dictionary<string, string?>
+            {
+                [ZohoOAuthParameters.Code] = grantToken,
+                [ZohoOAuthParameters.ClientId] = _options.ClientId,
+                [ZohoOAuthParameters.ClientSecret] = _options.ClientSecret,
+                [ZohoOAuthParameters.GrantType] = "authorization_code",
+                [ZohoOAuthParameters.RedirectUri] = _options.RedirectUri
+            });
+
+        using var response = await _httpClient.PostAsync(
+            url,
+            null,
+            cancellationToken);
+
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError(
+                "Ошибка обмена grant token. Статус: {Status}. Ответ: {Response}",
+                response.StatusCode,
+                json);
+
+            throw new InvalidOperationException(
+                $"Не удалось обменять grant token. Код: {response.StatusCode}. Ответ: {json}");
+        }
+
+        var tokenResponse = JsonSerializer.Deserialize<ZohoAccessTokenResponse>(
+            json,
+            JsonOptions);
+
+        if (tokenResponse is null)
+        {
+            throw new InvalidOperationException("Получен пустый ответ OAuth.");
+        }
+
+        // Сохраняем токен в хранилище
+        var token = ZohoToken.Create(
+            tokenResponse.AccessToken,
+            tokenResponse.ExpiresIn);
+
+        await _tokenStore.SaveAsync(token, cancellationToken);
+
+        _logger.LogInformation(
+            "Токены успешно получены. Access token действителен до {ExpiresAt}. Refresh token сохранён.",
+            token.ExpiresAtUtc);
+
+        return tokenResponse;
+    }
+
+    /// <inheritdoc />
     public async Task<string> GetAccessTokenAsync(
         CancellationToken cancellationToken = default)
     {
@@ -63,6 +124,12 @@ public sealed class ZohoAuthService(
             }
 
             _logger.LogInformation("Получение нового Access Token Zoho.");
+
+            if (string.IsNullOrWhiteSpace(_options.RefreshToken))
+            {
+                throw new InvalidOperationException(
+                    "Refresh token не настроен. Выполните первоначальную авторизацию через ExchangeCodeForTokenAsync.");
+            }
 
             var url = QueryHelpers.AddQueryString(
                 ZohoEndpoints.OAuthToken,

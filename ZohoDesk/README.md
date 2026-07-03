@@ -6,6 +6,7 @@
 
 - [Требования](#требования)
 - [Установка](#установка)
+- [Настройка OAuth 2.0](#настройка-oauth-20)
 - [Конфигурация](#конфигурация)
 - [Использование](#использование)
 - [Архитектура](#архитектура)
@@ -32,9 +33,101 @@
    - Microsoft.Extensions.Options
    - Microsoft.Extensions.DependencyInjection.Abstractions
 
+## Настройка OAuth 2.0
+
+### Шаг 1: Создание Self Client в Zoho Developer Console
+
+Для backend-сервисов без взаимодействия с пользователем используйте **Self Client**:
+
+1. Перейдите на [Zoho API Console](https://api-console.zoho.com/)
+2. Выберите **Self Client** → **Create Now**
+3. Скопируйте `Client ID` и `Client Secret`
+
+### Шаг 2: Генерация Grant Token
+
+1. В той же консоли перейдите во вкладку **Generate Code**
+2. Введите scopes (через запятую):
+```
+Desk.tickets.READ,Desk.tickets.WRITE,Desk.tickets.UPDATE,Desk.contacts.READ,Desk.contacts.WRITE,Desk.search.READ,Desk.basic.READ
+```
+3. Выберите время действия (например, 10 минут)
+4. Введите описание
+5. Нажмите **Generate** → скопируйте grant token
+
+### Шаг 3: Обмен Grant Token на Access/Refresh Tokens
+
+**Вариант A: Через код (рекомендуется)**
+
+```csharp
+public class TokenSetupService
+{
+    private readonly IZohoAuthService _authService;
+    private readonly ILogger<TokenSetupService> _logger;
+
+    public TokenSetupService(IZohoAuthService authService, ILogger<TokenSetupService> logger)
+    {
+        _authService = authService;
+        _logger = logger;
+    }
+
+    public async Task SetupTokensAsync(string grantToken)
+    {
+        var response = await _authService.ExchangeCodeForTokenAsync(grantToken);
+        
+        _logger.LogInformation(
+            "Access Token: {AccessToken}\nRefresh Token: {RefreshToken}\nExpires In: {ExpiresIn} seconds",
+            response.AccessToken,
+            response.RefreshToken,
+            response.ExpiresIn);
+
+        // Сохраните refresh_token в appsettings.json!
+        Console.WriteLine($"Refresh Token: {response.RefreshToken}");
+    }
+}
+```
+
+**Вариант B: Через curl**
+
+```bash
+curl -X POST "https://accounts.zoho.com/oauth/v2/token" \
+  -d "code=ВАШ_GRANT_TOKEN" \
+  -d "client_id=ВАШ_CLIENT_ID" \
+  -d "client_secret=ВАШ_CLIENT_SECRET" \
+  -d "redirect_uri=https://selfclient" \
+  -d "grant_type=authorization_code"
+```
+
+Ответ:
+```json
+{
+  "access_token": "1000.abc...",
+  "refresh_token": "1000.xyz...",
+  "expires_in": 3600,
+  "token_type": "Bearer"
+}
+```
+
+### Шаг 4: Сохранение Refresh Token
+
+Добавьте полученный refresh token в конфигурацию:
+
+```json
+{
+  "ZohoDesk": {
+    "ClientId": "ваш_client_id",
+    "ClientSecret": "ваш_client_secret",
+    "RefreshToken": "полученный_refresh_token",
+    "OrganizationId": "ваш_org_id",
+    "DepartmentId": "идентификатор_отдела"
+  }
+}
+```
+
+**Важно:** Refresh token бессрочный и не меняется при обновлении access token.
+
 ## Конфигурация
 
-### 1. Добавьте секцию в `appsettings.json`
+### Полная конфигурация
 
 ```json
 {
@@ -44,7 +137,10 @@
     "RefreshToken": "ваш_refresh_token",
     "OrganizationId": "ваш_org_id",
     "DepartmentId": "идентификатор_отдела",
-    "BaseUrl": "https://desk.zoho.com",
+    "AccountsBaseUrl": "https://accounts.zoho.com",
+    "DeskBaseUrl": "https://desk.zoho.com",
+    "RedirectUri": "https://selfclient",
+    "RequestTimeout": "00:00:30",
     "Retry": {
       "Enabled": true,
       "Delays": ["00:00:05", "00:00:30", "00:02:00"]
@@ -53,7 +149,7 @@
 }
 ```
 
-### 2. Зарегистрируйте сервисы в `Program.cs`
+### Регистрация сервисов
 
 ```csharp
 using ZohoDesk.Infrastructure;
