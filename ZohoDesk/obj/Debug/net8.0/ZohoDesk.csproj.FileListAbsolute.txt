@@ -1,0 +1,12 @@
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.csproj.AssemblyReference.cache
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.AssemblyInfoInputs.cache
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.AssemblyInfo.cs
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.csproj.CoreCompileInputs.cache
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\bin\Debug\net8.0\ZohoDesk.deps.json
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\bin\Debug\net8.0\ZohoDesk.dll
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\bin\Debug\net8.0\ZohoDesk.pdb
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.dll
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\refint\ZohoDesk.dll
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ZohoDesk.pdb
+C:\Users\mikhail\source\repos\ZohoDesk\ZohoDesk\obj\Debug\net8.0\ref\ZohoDesk.dll
