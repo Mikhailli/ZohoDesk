@@ -5,9 +5,8 @@ using System.Net.Http.Headers;
 using ZohoDesk.Constants;
 using ZohoDesk.Infrastructure;
 using ZohoDesk.Options;
-using ZohoDesk.Services;
 
-namespace ZohoDesk.Clients;
+namespace ZohoDesk.Services;
 
 /// <summary>
 /// Универсальный клиент для выполнения HTTP-запросов к API Zoho Desk.
@@ -21,18 +20,30 @@ namespace ZohoDesk.Clients;
 /// <remarks>
 /// Создает экземпляр клиента API Zoho Desk.
 /// </remarks>
-public sealed class ZohoApiClient(
-    HttpClient httpClient,
-    IZohoAuthService authService,
-    INotificationService notificationService,
-    IOptions<ZohoDeskOptions> options,
-    ILogger<ZohoApiClient> logger) : IZohoApiClient
+public sealed class ZohoApiClient : IZohoApiClient
 {
-    private readonly HttpClient _httpClient = httpClient;
-    private readonly IZohoAuthService _authService = authService;
-    private readonly INotificationService _notificationService = notificationService;
-    private readonly ZohoDeskOptions _options = options.Value;
-    private readonly ILogger<ZohoApiClient> _logger = logger;
+    private readonly HttpClient _httpClient;
+    private readonly IZohoAuthService _authService;
+    private readonly INotificationService _notificationService;
+    private readonly ZohoDeskOptions _options;
+    private readonly ILogger<ZohoApiClient> _logger;
+
+    public ZohoApiClient(
+        HttpClient httpClient,
+        IZohoAuthService authService,
+        INotificationService notificationService,
+        IOptions<ZohoDeskOptions> options,
+        ILogger<ZohoApiClient> logger)
+    {
+        _httpClient = httpClient;
+        _authService = authService;
+        _notificationService = notificationService;
+        _options = options.Value;
+        _logger = logger;
+
+        var baseUrl = _options.DeskBaseUrl;
+        _httpClient.BaseAddress = new Uri(baseUrl);
+    }
 
     public async Task<TResponse?> SendAsync<TResponse>(
         Func<HttpRequestMessage> requestFactory,
@@ -170,21 +181,21 @@ public sealed class ZohoApiClient(
     {
         request.Headers.Authorization =
             new AuthenticationHeaderValue(
-                ZohoHeaders.OAuthScheme,
+                ZohoConstants.OAuthScheme,
                 accessToken);
 
         request.Headers.Remove(
-            ZohoHeaders.OrganizationId);
+            ZohoConstants.OrganizationId);
 
         request.Headers.Add(
-            ZohoHeaders.OrganizationId,
+            ZohoConstants.OrganizationId,
             _options.OrganizationId);
 
         request.Headers.Accept.Clear();
 
         request.Headers.Accept.Add(
             new MediaTypeWithQualityHeaderValue(
-                ZohoContentTypes.ApplicationJson));
+                ZohoConstants.ApplicationJson));
     }
 
     /// <summary>

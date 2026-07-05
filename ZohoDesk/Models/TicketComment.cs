@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ZohoDesk.DTO;
+namespace ZohoDesk.Models;
 
 /// <summary>
 /// Комментарий к тикету Zoho Desk.

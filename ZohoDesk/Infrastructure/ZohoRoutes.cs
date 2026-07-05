@@ -1,5 +1,6 @@
 ﻿using System.Text;
-using ZohoDesk.Clients;
+using ZohoDesk.Constants;
+using ZohoDesk.Services;
 
 namespace ZohoDesk.Infrastructure;
 
@@ -9,6 +10,52 @@ namespace ZohoDesk.Infrastructure;
 public static class ZohoRoutes
 {
     private const string ApiVersion = "api/v1";
+    private const string OAuthVersion = "oauth/v2/token";
+
+    /// <summary>
+    /// URL для обмена grant token на access/refresh tokens.
+    /// </summary>
+    /// <param name="grantToken">Grant token полученный после авторизации.</param>
+    /// <param name="clientId">Client ID приложения.</param>
+    /// <param name="clientSecret">Client Secret приложения.</param>
+    /// <param name="redirectUri">URI для перенаправления.</param>
+    public static string OAuthExchangeGrantToken(
+        string grantToken,
+        string clientId,
+        string clientSecret,
+        string? redirectUri)
+    {
+        var queryBuilder = new StringBuilder($"{OAuthVersion}?");
+
+        queryBuilder.Append($"{ZohoConstants.Code}={Uri.EscapeDataString(grantToken)}");
+        queryBuilder.Append($"&{ZohoConstants.ClientId}={Uri.EscapeDataString(clientId)}");
+        queryBuilder.Append($"&{ZohoConstants.ClientSecret}={Uri.EscapeDataString(clientSecret)}");
+        queryBuilder.Append($"&{ZohoConstants.RedirectUri}={Uri.EscapeDataString(redirectUri ?? "")}");
+        queryBuilder.Append($"&{ZohoConstants.GrantType}={ZohoConstants.AuthorizationTokenGrant}");
+
+        return queryBuilder.ToString();
+    }
+
+    /// <summary>
+    /// URL для обновления access token.
+    /// </summary>
+    /// <param name="refreshToken">Refresh token.</param>
+    /// <param name="clientId">Client ID приложения.</param>
+    /// <param name="clientSecret">Client Secret приложения.</param>
+    public static string OAuthRefreshToken(
+        string refreshToken,
+        string clientId,
+        string clientSecret)
+    {
+        var queryBuilder = new StringBuilder($"{OAuthVersion}?");
+
+        queryBuilder.Append($"{ZohoConstants.RefreshToken}={Uri.EscapeDataString(refreshToken)}");
+        queryBuilder.Append($"&{ZohoConstants.ClientId}={Uri.EscapeDataString(clientId)}");
+        queryBuilder.Append($"&{ZohoConstants.ClientSecret}={Uri.EscapeDataString(clientSecret)}");
+        queryBuilder.Append($"&{ZohoConstants.GrantType}={ZohoConstants.RefreshTokenGrant}");
+
+        return queryBuilder.ToString();
+    }
 
     /// <summary>
     /// URL коллекции контактов.

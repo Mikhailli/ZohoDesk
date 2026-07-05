@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
-using ZohoDesk.DTO;
 using ZohoDesk.Infrastructure;
+using ZohoDesk.Models;
 
-namespace ZohoDesk.Clients;
+namespace ZohoDesk.Services;
 
 /// <summary>
 /// Клиент для работы с тикетами Zoho Desk.
@@ -29,11 +29,12 @@ public sealed class TicketsClient(
             {
                 var httpRequest = new HttpRequestMessage(
                     HttpMethod.Post,
-                    ZohoRoutes.Tickets());
-
-                httpRequest.Content = JsonContent.Create(
-                    request,
-                    options: JsonOptionsProvider.Default);
+                    ZohoRoutes.Tickets())
+                {
+                    Content = JsonContent.Create(
+                        request,
+                        options: JsonOptionsProvider.Default)
+                };
 
                 return httpRequest;
             },
@@ -53,11 +54,12 @@ public sealed class TicketsClient(
             {
                 var httpRequest = new HttpRequestMessage(
                     HttpMethod.Patch,
-                    ZohoRoutes.Ticket(ticketId));
-
-                httpRequest.Content = JsonContent.Create(
-                    request,
-                    options: JsonOptionsProvider.Default);
+                    ZohoRoutes.Ticket(ticketId))
+                {
+                    Content = JsonContent.Create(
+                        request,
+                        options: JsonOptionsProvider.Default)
+                };
 
                 return httpRequest;
             },

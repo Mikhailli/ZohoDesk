@@ -1,11 +1,32 @@
 ﻿namespace ZohoDesk.Constants;
 
-/// <summary>
-/// Названия параметров OAuth-запросов,
-/// используемых для получения Access Token.
-/// </summary>
-public static class ZohoOAuthParameters
+public static class ZohoConstants
 {
+    #region Content Types
+
+    /// <summary>
+    /// JSON.
+    /// </summary>
+    public const string ApplicationJson = "application/json";
+
+    #endregion
+
+    #region ZohoHeaders
+
+    /// <summary>
+    /// Заголовок с идентификатором организации Zoho Desk.
+    /// </summary>
+    public const string OrganizationId = "orgId";
+
+    /// <summary>
+    /// Схема авторизации Zoho OAuth.
+    /// </summary>
+    public const string OAuthScheme = "Zoho-oauthtoken";
+
+    #endregion
+
+    #region ZohoOAuthParameters
+
     /// <summary>
     /// Идентификатор OAuth-приложения.
     /// </summary>
@@ -32,6 +53,11 @@ public static class ZohoOAuthParameters
     public const string RefreshTokenGrant = "refresh_token";
 
     /// <summary>
+    /// Значение Grant Type для обмена grant token на access/refresh tokens.
+    /// </summary>
+    public const string AuthorizationTokenGrant = "authorization_code";
+
+    /// <summary>
     /// Код авторизации (grant token).
     /// </summary>
     public const string Code = "code";
@@ -41,28 +67,5 @@ public static class ZohoOAuthParameters
     /// </summary>
     public const string RedirectUri = "redirect_uri";
 
-    /// <summary>
-    /// Тип ответа.
-    /// </summary>
-    public const string ResponseType = "response_type";
-
-    /// <summary>
-    /// Область доступа (scopes).
-    /// </summary>
-    public const string Scope = "scope";
-
-    /// <summary>
-    /// Тип доступа (online/offline).
-    /// </summary>
-    public const string AccessType = "access_type";
-
-    /// <summary>
-    /// Параметр state для защиты от CSRF.
-    /// </summary>
-    public const string State = "state";
-
-    /// <summary>
-    /// Prompt для согласия пользователя.
-    /// </summary>
-    public const string Prompt = "prompt";
+    #endregion
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ZohoDesk.Clients;
-using ZohoDesk.DTO;
 using ZohoDesk.Models;
 using ZohoDesk.Options;
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZohoDesk.Authentication;
-using ZohoDesk.Clients;
 using ZohoDesk.Options;
 using ZohoDesk.Services;
 
@@ -33,31 +32,9 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<INotificationService, LogNotificationService>();
 
-        // HttpClient для Zoho Desk API
-        services.AddHttpClient<IZohoApiClient, ZohoApiClient>(client =>
-        {
-            var options = configuration
-                .GetSection(ZohoDeskOptions.SectionName)
-                .Get<ZohoDeskOptions>();
+        services.AddHttpClient<IZohoApiClient, ZohoApiClient>();
 
-            if (options is not null && !string.IsNullOrWhiteSpace(options.DeskBaseUrl))
-            {
-                client.BaseAddress = new Uri(options.DeskBaseUrl);
-            }
-        });
-
-        // HttpClient для OAuth запросов (accounts.zoho.com)
-        services.AddHttpClient<ZohoAuthService>(client =>
-        {
-            var options = configuration
-                .GetSection(ZohoDeskOptions.SectionName)
-                .Get<ZohoDeskOptions>();
-
-            if (options is not null && !string.IsNullOrWhiteSpace(options.AccountsBaseUrl))
-            {
-                client.BaseAddress = new Uri(options.AccountsBaseUrl);
-            }
-        });
+        services.AddHttpClient<IZohoAuthService, ZohoAuthService>();
 
         services.AddScoped<IContactsClient, ContactsClient>();
 
@@ -66,6 +43,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICommentsClient, CommentsClient>();
 
         services.AddScoped<IZohoDeskService, ZohoDeskService>();
+
+        services.AddScoped<IZohoAuthService, ZohoAuthService>();
 
         services.AddDistributedMemoryCache();
 

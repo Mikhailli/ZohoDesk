@@ -1,4 +1,4 @@
-﻿namespace ZohoDesk.Clients;
+﻿namespace ZohoDesk.Services;
 
 /// <summary>
 /// Универсальный клиент для выполнения HTTP-запросов к API Zoho Desk.

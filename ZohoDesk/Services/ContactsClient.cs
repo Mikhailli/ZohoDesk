@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
-using ZohoDesk.DTO;
 using ZohoDesk.Infrastructure;
+using ZohoDesk.Models;
 
-namespace ZohoDesk.Clients;
+namespace ZohoDesk.Services;
 
 /// <summary>
 /// Клиент для работы с контактами Zoho Desk.
@@ -74,11 +74,12 @@ public sealed class ContactsClient(
             {
                 var httpRequest = new HttpRequestMessage(
                     HttpMethod.Post,
-                    ZohoRoutes.Contacts());
-
-                httpRequest.Content = JsonContent.Create(
-                    request,
-                    options: JsonOptionsProvider.Default);
+                    ZohoRoutes.Contacts())
+                {
+                    Content = JsonContent.Create(
+                        request,
+                        options: JsonOptionsProvider.Default)
+                };
 
                 return httpRequest;
             },

@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using ZohoDesk.DTO;
+using ZohoDesk.Models;
 
 namespace ZohoDesk.Exceptions;
 

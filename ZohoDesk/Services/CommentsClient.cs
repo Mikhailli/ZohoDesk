@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
-using ZohoDesk.DTO;
 using ZohoDesk.Infrastructure;
+using ZohoDesk.Models;
 
-namespace ZohoDesk.Clients;
+namespace ZohoDesk.Services;
 
 /// <summary>
 /// Клиент для работы с комментариями к тикетам Zoho Desk.
@@ -31,11 +31,12 @@ public sealed class CommentsClient(
             {
                 var httpRequest = new HttpRequestMessage(
                     HttpMethod.Post,
-                    ZohoRoutes.TicketComments(ticketId));
-
-                httpRequest.Content = JsonContent.Create(
-                    request,
-                    options: JsonOptionsProvider.Default);
+                    ZohoRoutes.TicketComments(ticketId))
+                {
+                    Content = JsonContent.Create(
+                        request,
+                        options: JsonOptionsProvider.Default)
+                };
 
                 return httpRequest;
             },

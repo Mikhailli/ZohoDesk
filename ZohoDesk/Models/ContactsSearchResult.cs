@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ZohoDesk.DTO;
+namespace ZohoDesk.Models;
 
 /// <summary>
 /// Результат поиска контактов Zoho Desk.

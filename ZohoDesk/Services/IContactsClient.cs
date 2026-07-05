@@ -1,6 +1,6 @@
-﻿using ZohoDesk.DTO;
+﻿using ZohoDesk.Models;
 
-namespace ZohoDesk.Clients;
+namespace ZohoDesk.Services;
 
 /// <summary>
 /// Параметры поиска контактов.

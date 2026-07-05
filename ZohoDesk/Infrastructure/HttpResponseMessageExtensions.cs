@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
-using ZohoDesk.DTO;
 using ZohoDesk.Exceptions;
+using ZohoDesk.Models;
 
 namespace ZohoDesk.Infrastructure;
 

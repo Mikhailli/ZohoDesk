@@ -1,4 +1,4 @@
-﻿using ZohoDesk.DTO;
+﻿using ZohoDesk.Models;
 
 namespace ZohoDesk.Services;
 

@@ -30,7 +30,6 @@ try
 {
     logger.LogInformation("🚀 Запуск тестирования Zoho Desk модуля...");
 
-    // Получаем сервис
     var zohoDesk = host.Services.GetRequiredService<IZohoDeskService>();
 
     await TestZohoDeskAsync(zohoDesk, logger);

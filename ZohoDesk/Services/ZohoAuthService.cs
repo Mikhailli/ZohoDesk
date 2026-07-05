@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using ZohoDesk.Authentication;
-using ZohoDesk.Constants;
-using ZohoDesk.DTO;
+using ZohoDesk.Infrastructure;
 using ZohoDesk.Models;
 using ZohoDesk.Options;
 
@@ -13,25 +11,30 @@ namespace ZohoDesk.Services;
 /// <summary>
 /// Сервис получения и обновления OAuth Access Token.
 /// </summary>
-public sealed class ZohoAuthService(
-    HttpClient httpClient,
-    IOptions<ZohoDeskOptions> options,
-    IZohoTokenStore tokenStore,
-    ILogger<ZohoAuthService> logger) : IZohoAuthService
+public sealed class ZohoAuthService : IZohoAuthService
 {
-    private readonly HttpClient _httpClient = httpClient;
-    private readonly ZohoDeskOptions _options = options.Value;
-    private readonly IZohoTokenStore _tokenStore = tokenStore;
-    private readonly ILogger<ZohoAuthService> _logger = logger;
+    private readonly HttpClient _httpClient;
+    private readonly ZohoDeskOptions _options;
+    private readonly IZohoTokenStore _tokenStore;
+    private readonly ILogger<ZohoAuthService> _logger;
 
     private readonly SemaphoreSlim _lock = new(1, 1);
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    public ZohoAuthService(
+        HttpClient httpClient,
+        IOptions<ZohoDeskOptions> options,
+        IZohoTokenStore tokenStore,
+        ILogger<ZohoAuthService> logger)
     {
-        PropertyNameCaseInsensitive = true
-    };
+        _httpClient = httpClient;
+        _options = options.Value;
+        _tokenStore = tokenStore;
+        _logger = logger;
 
-    /// <inheritdoc />
+        var baseUrl = _options.AccountsBaseUrl;
+        _httpClient.BaseAddress = new Uri(baseUrl);
+    }
+
     public async Task<ZohoAccessTokenResponse> ExchangeCodeForTokenAsync(
         string grantToken,
         CancellationToken cancellationToken = default)
@@ -40,16 +43,11 @@ public sealed class ZohoAuthService(
 
         _logger.LogInformation("Обмен grant token на access/refresh tokens.");
 
-        var url = QueryHelpers.AddQueryString(
-            ZohoEndpoints.OAuthToken,
-            new Dictionary<string, string?>
-            {
-                [ZohoOAuthParameters.Code] = grantToken,
-                [ZohoOAuthParameters.ClientId] = _options.ClientId,
-                [ZohoOAuthParameters.ClientSecret] = _options.ClientSecret,
-                [ZohoOAuthParameters.GrantType] = "authorization_code",
-                [ZohoOAuthParameters.RedirectUri] = _options.RedirectUri
-            });
+        var url = ZohoRoutes.OAuthExchangeGrantToken(
+            grantToken,
+            _options.ClientId,
+            _options.ClientSecret,
+            _options.RedirectUri);
 
         using var response = await _httpClient.PostAsync(
             url,
@@ -71,7 +69,7 @@ public sealed class ZohoAuthService(
 
         var tokenResponse = JsonSerializer.Deserialize<ZohoAccessTokenResponse>(
             json,
-            JsonOptions);
+            JsonOptionsProvider.Default);
 
         if (tokenResponse is null)
         {
@@ -92,7 +90,6 @@ public sealed class ZohoAuthService(
         return tokenResponse;
     }
 
-    /// <inheritdoc />
     public async Task<string> GetAccessTokenAsync(
         CancellationToken cancellationToken = default)
     {
@@ -107,7 +104,6 @@ public sealed class ZohoAuthService(
         return await RefreshAccessTokenAsync(cancellationToken);
     }
 
-    /// <inheritdoc />
     public async Task<string> RefreshAccessTokenAsync(
         CancellationToken cancellationToken = default)
     {
@@ -131,15 +127,10 @@ public sealed class ZohoAuthService(
                     "Refresh token не настроен. Выполните первоначальную авторизацию через ExchangeCodeForTokenAsync.");
             }
 
-            var url = QueryHelpers.AddQueryString(
-                ZohoEndpoints.OAuthToken,
-                new Dictionary<string, string?>
-                {
-                    [ZohoOAuthParameters.RefreshToken] = _options.RefreshToken,
-                    [ZohoOAuthParameters.ClientId] = _options.ClientId,
-                    [ZohoOAuthParameters.ClientSecret] = _options.ClientSecret,
-                    [ZohoOAuthParameters.GrantType] = "refresh_token"
-                });
+            var url = ZohoRoutes.OAuthRefreshToken(
+                _options.RefreshToken,
+                _options.ClientId,
+                _options.ClientSecret);
 
             using var response =
                 await _httpClient.PostAsync(
@@ -164,7 +155,7 @@ public sealed class ZohoAuthService(
             var tokenResponse =
                 JsonSerializer.Deserialize<ZohoAccessTokenResponse>(
                     json,
-                    JsonOptions);
+                    JsonOptionsProvider.Default);
 
             if (tokenResponse is null)
             {
