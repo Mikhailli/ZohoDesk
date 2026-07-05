@@ -54,4 +54,10 @@ public sealed class SupportTicketRequest
     /// Пользовательские поля.
     /// </summary>
     public Dictionary<string, object>? CustomFields { get; init; }
+
+    /// <summary>
+    /// Идентификатор департамента.
+    /// Если не указан, используется значение из конфигурации.
+    /// </summary>
+    public string? DepartmentId { get; init; }
 }

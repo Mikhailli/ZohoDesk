@@ -79,7 +79,7 @@ public sealed class ZohoDeskService : IZohoDeskService
                 Subject = request.Subject,
                 Description = request.Description,
                 ContactId = contact.Id,
-                DepartmentId = _options.DepartmentId,
+                DepartmentId = request.DepartmentId ?? _options.DepartmentId,
                 Priority = request.Priority,
                 Category = request.Category,
                 SubCategory = request.SubCategory,

@@ -9,6 +9,8 @@
 # User-specific files
 *.suo
 *.user
+*.userosscache
+*.sln.docstates
 
 # Debug symbols
 *.pdb
@@ -27,6 +29,7 @@ publish/
 ### Windows
 # Windows thumbnail cache files
 Thumbs.db
+ehthumbs.db
 
 # Folder config file
 [Dd]esktop.ini
@@ -38,10 +41,6 @@ $RECYCLE.BIN/
 *.lnk
 
 ### VisualStudio
-# User-specific files
-*.suo
-*.user
-
 # Build results
 [Dd]ebug/
 [Rr]elease/
@@ -50,8 +49,6 @@ x86/
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
-[Bb]in/
-[Oo]bj/
 
 # Visual Studio cache/options directory
 .vs/
@@ -67,5 +64,18 @@ x86/
 *.nuget.props
 *.nuget.targets
 
-# Publish Web Output
-*.[Pp]ublish.xml
+### JetBrains
+# Rider
+.idea/
+*.sln.iml
+
+### VS Code
+.vscode/
+
+### macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Linux
+*~
